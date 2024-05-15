@@ -1,6 +1,8 @@
 #include "kdtree.h"
 #include <limits>
 #include <utility>
+#include <queue>
+#include <functional>
 
 Point::Point(std::vector<double> coordinates) : coords(std::move(coordinates)) {}
 
@@ -76,4 +78,54 @@ Point KDTree::findNearestNeighbor(Point target) {
     double bestDist = std::numeric_limits<double>::max();
     nearest = findNearestNeighborUtil(root, std::move(target), nearest, bestDist, 0);
     return nearest->point;
+}
+
+std::vector<Point> KDTree::findKNearestNeighbors(Point target, int k) {
+    std::priority_queue<std::pair<double, KDNode*>> pq;
+
+    // Helper function to compare distances for priority queue
+    auto compareDistances = [&](KDNode* a, KDNode* b) {
+        return distance(a->point, target) < distance(b->point, target);
+    };
+
+    // Helper function to insert into priority queue and keep size <= k
+    auto insertIntoQueue = [&](KDNode* node) {
+        double dist = distance(node->point, target);
+        pq.push({dist, node});
+        if (pq.size() > k) pq.pop(); // Keep size <= k
+    };
+
+    // Recursive function to traverse the tree and find nearest neighbors
+    std::function<void(KDNode*, int)> traverse = [&](KDNode* node, int depth) {
+        if (node == nullptr) return;
+
+        int dim = depth % dimensions;
+        KDNode* nearerSubtree = (target.coords[dim] < node->point.coords[dim]) ? node->left : node->right;
+        KDNode* furtherSubtree = (target.coords[dim] < node->point.coords[dim]) ? node->right : node->left;
+
+        // Insert current node into priority queue
+        insertIntoQueue(node);
+
+        // Traverse nearer subtree
+        traverse(nearerSubtree, depth + 1);
+
+        // Check if we need to traverse further subtree
+        if (std::abs(target.coords[dim] - node->point.coords[dim]) < pq.top().first || pq.size() < k)
+            traverse(furtherSubtree, depth + 1);
+    };
+
+    // Start traversal from root
+    traverse(root, 0);
+
+    // Extract k nearest neighbors from priority queue
+    std::vector<Point> nearestNeighbors;
+    while (!pq.empty()) {
+        nearestNeighbors.push_back(pq.top().second->point);
+        pq.pop();
+    }
+
+    // Reverse the vector to get neighbors in ascending order of distance
+    std::reverse(nearestNeighbors.begin(), nearestNeighbors.end());
+
+    return nearestNeighbors;
 }
