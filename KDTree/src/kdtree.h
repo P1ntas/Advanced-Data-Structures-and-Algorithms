@@ -12,7 +12,7 @@
 struct Point {
     std::vector<double> coords;
 
-    Point(std::vector<double> coordinates);
+    explicit Point(std::vector<double> coordinates);
 };
 
 class KDNode {
@@ -21,7 +21,7 @@ public:
     KDNode* left;
     KDNode* right;
 
-    KDNode(Point p);
+    explicit KDNode(Point p);
 };
 
 class KDTree {
@@ -29,12 +29,12 @@ private:
     int dimensions;
     KDNode* root;
 
-    KDNode* insertUtil(KDNode* node, Point point, int depth);
+    KDNode* insertUtil(KDNode* node, Point point, int depth) const;
     KDNode* findNearestNeighborUtil(KDNode* node, Point target, KDNode* best, double& bestDist, int depth);
-    double distance(Point p1, Point p2);
+    [[nodiscard]] double distance(Point p1, Point p2) const;
 
 public:
-    KDTree(int dims);
+    explicit KDTree(int dims);
 
     void insert(Point point);
     Point findNearestNeighbor(Point target);

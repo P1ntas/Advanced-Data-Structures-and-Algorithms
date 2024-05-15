@@ -1,25 +1,42 @@
 #include "kdtree.h"
 #include <limits>
+#include <utility>
 
-Point::Point(std::vector<double> coordinates) : coords(coordinates) {}
+Point::Point(std::vector<double> coordinates) : coords(std::move(coordinates)) {}
 
-KDNode::KDNode(Point p) : point(p), left(nullptr), right(nullptr) {}
+KDNode::KDNode(Point p) : point(std::move(p)), left(nullptr), right(nullptr) {}
 
 KDTree::KDTree(int dims) : dimensions(dims), root(nullptr) {}
 
-KDNode* KDTree::insertUtil(KDNode* node, Point point, int depth) {
+KDNode* KDTree::insertUtil(KDNode* node, Point point, int depth) const {
     if (node == nullptr)
         return new KDNode(point);
 
+    KDNode* current = node;
+    KDNode* parent = nullptr;
     int dim = depth % dimensions;
 
-    if (point.coords[dim] < node->point.coords[dim])
-        node->left = insertUtil(node->left, point, depth + 1);
+    // Traverse the tree to find the appropriate position for insertion
+    while (current != nullptr) {
+        parent = current;
+        if (point.coords[dim] < current->point.coords[dim])
+            current = current->left;
+        else
+            current = current->right;
+        depth++;
+        dim = depth % dimensions;
+    }
+
+    // Create the new node and attach it to the tree
+    KDNode* newNode = new KDNode(point);
+    if (point.coords[dim] < parent->point.coords[dim])
+        parent->left = newNode;
     else
-        node->right = insertUtil(node->right, point, depth + 1);
+        parent->right = newNode;
 
     return node;
 }
+
 
 KDNode* KDTree::findNearestNeighborUtil(KDNode* node, Point target, KDNode* best, double& bestDist, int depth) {
     if (node == nullptr)
@@ -43,7 +60,7 @@ KDNode* KDTree::findNearestNeighborUtil(KDNode* node, Point target, KDNode* best
     return best;
 }
 
-double KDTree::distance(Point p1, Point p2) {
+double KDTree::distance(Point p1, Point p2) const {
     double dist = 0.0;
     for (int i = 0; i < dimensions; ++i)
         dist += (p1.coords[i] - p2.coords[i]) * (p1.coords[i] - p2.coords[i]);
@@ -51,12 +68,12 @@ double KDTree::distance(Point p1, Point p2) {
 }
 
 void KDTree::insert(Point point) {
-    root = insertUtil(root, point, 0);
+    root = insertUtil(root, std::move(point), 0);
 }
 
 Point KDTree::findNearestNeighbor(Point target) {
     KDNode* nearest = nullptr;
     double bestDist = std::numeric_limits<double>::max();
-    nearest = findNearestNeighborUtil(root, target, nearest, bestDist, 0);
+    nearest = findNearestNeighborUtil(root, std::move(target), nearest, bestDist, 0);
     return nearest->point;
 }
