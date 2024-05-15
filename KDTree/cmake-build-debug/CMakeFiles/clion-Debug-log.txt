@@ -1,0 +1,4 @@
+"D:\Faculdade\Programs\CLion 2024.1.1\bin\cmake\win\x64\bin\cmake.exe" -DCMAKE_BUILD_TYPE=Debug "-DCMAKE_MAKE_PROGRAM=D:/Faculdade/Programs/CLion 2024.1.1/bin/ninja/win/x64/ninja.exe" -G Ninja -S "C:\Users\janto\OneDrive\Ambiente de Trabalho\Faculdade\4ºAno\2º Semestre\EDAA\EDAA-2024\KDTree" -B "C:\Users\janto\OneDrive\Ambiente de Trabalho\Faculdade\4ºAno\2º Semestre\EDAA\EDAA-2024\KDTree\cmake-build-debug"
+-- Configuring done (0.2s)
+-- Generating done (0.0s)
+-- Build files have been written to: C:/Users/janto/OneDrive/Ambiente de Trabalho/Faculdade/4ºAno/2º Semestre/EDAA/EDAA-2024/KDTree/cmake-build-debug

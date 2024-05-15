@@ -1,0 +1,6 @@
+# ninja log v5
+19	617	7374940615934966	CMakeFiles/KDTree.dir/main.cpp.obj	6193c9d3a2ce0be5
+59	781	7374940617564704	CMakeFiles/KDTree.dir/src/kdtree.cpp.obj	4bc425fecf58b784
+782	1045	7374940620148299	KDTree.exe	19cb46aede4ad740
+17	570	7374940940577882	CMakeFiles/KDTree.dir/main.cpp.obj	6193c9d3a2ce0be5
+571	673	7374940941526418	KDTree.exe	19cb46aede4ad740

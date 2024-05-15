@@ -5,10 +5,39 @@
 #ifndef KDTREE_KDTREE_H
 #define KDTREE_KDTREE_H
 
+#include <iostream>
+#include <vector>
+#include <cmath>
 
-class kdtree {
+struct Point {
+    std::vector<double> coords;
 
+    Point(std::vector<double> coordinates);
 };
 
+class KDNode {
+public:
+    Point point;
+    KDNode* left;
+    KDNode* right;
+
+    KDNode(Point p);
+};
+
+class KDTree {
+private:
+    int dimensions;
+    KDNode* root;
+
+    KDNode* insertUtil(KDNode* node, Point point, int depth);
+    KDNode* findNearestNeighborUtil(KDNode* node, Point target, KDNode* best, double& bestDist, int depth);
+    double distance(Point p1, Point p2);
+
+public:
+    KDTree(int dims);
+
+    void insert(Point point);
+    Point findNearestNeighbor(Point target);
+};
 
 #endif //KDTREE_KDTREE_H

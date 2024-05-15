@@ -1,0 +1,3 @@
+C:/Users/janto/OneDrive/Ambiente de Trabalho/Faculdade/4ºAno/2º Semestre/EDAA/EDAA-2024/KDTree/cmake-build-debug/CMakeFiles/KDTree.dir
+C:/Users/janto/OneDrive/Ambiente de Trabalho/Faculdade/4ºAno/2º Semestre/EDAA/EDAA-2024/KDTree/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/janto/OneDrive/Ambiente de Trabalho/Faculdade/4ºAno/2º Semestre/EDAA/EDAA-2024/KDTree/cmake-build-debug/CMakeFiles/rebuild_cache.dir
