@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <algorithm>
 #include "src/song.h"
 #include "src/kdtree.h"
 #include "nlohmann/json.hpp"
@@ -67,19 +68,41 @@ int main() {
         tree.insert(Point(song));
     }
 
-    std::vector<double> target_numeric = {0.195, 2020, 0.00998, 0.671, 337147, 0.623, 1, 0.00000755, 2, 0.643, -7.161, 1, 70, 0.308, 75.055};
-    std::vector<std::string> target_strings = {"Eminem", "5SiZJoLXp3WOl3J4C8IK0d", "Darkness", "2020-01-17"};
-    Song target_song(target_numeric, target_strings);
-    Point target(target_song);
+    std::string search_name;
+    std::string search_artist;
+    while (true) {
+        std::cout << "Enter the name of the song to search for (or 'exit' to quit): ";
+        std::getline(std::cin, search_name);
+        if (search_name == "exit") {
+            break;
+        }
 
-    Point nearest = tree.findNearestNeighbor(target);
-    std::cout << "Nearest neighbor to song '" << target.song.name << "' is '" << nearest.song.name << "'\n";
+        std::cout << "Enter the artist of the song: ";
+        std::getline(std::cin, search_artist);
+        if (search_artist == "exit") {
+            break;
+        }
 
-    int k = 3;
-    std::vector<Point> nearestNeighbors = tree.findKNearestNeighbors(target, k);
-    std::cout << k << " Nearest neighbors to song '" << target.song.name << "':\n";
-    for (const auto& neighbor : nearestNeighbors) {
-        std::cout << "'" << neighbor.song.name << "' by " << neighbor.song.artists << "\n";
+        auto it = std::find_if(songs.begin(), songs.end(), [&search_name, &search_artist](const Song& song) {
+            return song.name == search_name && song.artists == search_artist;
+        });
+
+        if (it != songs.end()) {
+            Song target_song = *it;
+            Point target(target_song);
+
+            Point nearest = tree.findNearestNeighbor(target);
+            std::cout << "Nearest neighbor to song '" << target.song.name << "' is '" << nearest.song.name << "'\n";
+
+            int k = 3;
+            std::vector<Point> nearestNeighbors = tree.findKNearestNeighbors(target, k);
+            std::cout << k << " Nearest neighbors to song '" << target.song.name << "':\n";
+            for (const auto& neighbor : nearestNeighbors) {
+                std::cout << "'" << neighbor.song.name << "' by " << neighbor.song.artists << "\n";
+            }
+        } else {
+            std::cout << "Song '" << search_name << "' by '" << search_artist << "' not found. Please try again.\n";
+        }
     }
 
     return 0;
