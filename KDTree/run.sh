@@ -3,10 +3,11 @@
 # List of commands to run
 
 commands=(
+    "clear"
     "cmake CMakeLists.txt"
     "make"
     "./clean_directory.sh"
-    "clear"
+    #"clear"
     "./KDTree"
 
 )
@@ -16,4 +17,10 @@ for cmd in "${commands[@]}";
 do
     echo "Running: $cmd"
     $cmd
+
+    # Check if the command was successful
+    if [ $? -ne 0 ]; then
+        echo "Error: $cmd failed"
+        exit 1
+    fi
 done
