@@ -43,6 +43,63 @@ public:
     const Song* getSong() const {
         return this;
     }
+
+    // Overload the operator to compare two songs
+    bool operator==(const Song &song) const {
+        return this->id == song.id;
+    }
+
+    // Overload the operator to compare two songs
+    bool operator!=(const Song &song) const {
+        return this->id != song.id;
+    }
+
+    // Overload the operator to compare two songs
+    bool operator<(const Song &song) const {
+        return this->name < song.name;
+    }
+
+    // Destructor
+    ~Song() {}
+
+    // Copy constructor
+    Song(const Song &song) {
+        this->numeric_data = song.numeric_data;
+        this->id = song.id;
+        this->name = song.name;
+        this->artists = song.artists;
+        this->release_date = song.release_date;
+    }
+
+    // Copy assignment operator
+    Song& operator=(const Song &song) {
+        this->numeric_data = song.numeric_data;
+        this->id = song.id;
+        this->name = song.name;
+        this->artists = song.artists;
+        this->release_date = song.release_date;
+        return *this;
+    }
+
+    // Move constructor
+    Song(Song &&song) {
+        this->numeric_data = song.numeric_data;
+        this->id = song.id;
+        this->name = song.name;
+        this->artists = song.artists;
+        this->release_date = song.release_date;
+    }
+
+    // Move assignment operator
+    Song& operator=(Song &&song) {
+        this->numeric_data = song.numeric_data;
+        this->id = song.id;
+        this->name = song.name;
+        this->artists = song.artists;
+        this->release_date = song.release_date;
+        return *this;
+    }
+    
 };
 
 #endif
