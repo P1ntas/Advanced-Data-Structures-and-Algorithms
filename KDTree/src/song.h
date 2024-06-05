@@ -10,8 +10,8 @@ public:
 
     const std::vector<std::string> keys = 
     {
-        "year",
         "valence",
+        "year",
         "acousticness",
         "danceability",
         "duration_ms",
