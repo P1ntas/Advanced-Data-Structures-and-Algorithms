@@ -2,5 +2,6 @@
 Call first 
 ```
 cmake CMakeLists.txt
+make
 ./KDTree
 ```
