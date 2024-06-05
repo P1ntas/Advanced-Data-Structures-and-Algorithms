@@ -39,6 +39,10 @@ public:
         std::string artists,
         std::string release_date);
     std::vector<double> getCoordinates() const;
+
+    const Song* getSong() const {
+        return this;
+    }
 };
 
 #endif

@@ -5,10 +5,9 @@
 #include <functional>
 #include <cmath>
 
-Point::Point(std::vector<double> coordinates) : coords(std::move(coordinates)) {}
+Point::Point(std::vector<double> coordinates) : coords(std::move(coordinates)), song(nullptr) {}
 
-Point::Point(Song *song) {
-    this->song = song;
+Point::Point(const Song *song) : song(song) {
     this->coords = song->getCoordinates();
 }
 KDNode::KDNode(Point p) : point(std::move(p)), left(nullptr), right(nullptr) {}

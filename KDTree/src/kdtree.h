@@ -7,9 +7,9 @@
 #include "song.h"
 
 struct Point {
-    Song * song = nullptr;
+    const Song * song;
     std::vector<double> coords;
-    Point(Song * song);
+    Point(const Song * song);
     Point(std::vector<double> coordinates);
 };
 
