@@ -7,6 +7,10 @@
 
 Point::Point(std::vector<double> coordinates) : coords(std::move(coordinates)) {}
 
+Point::Point(Song *song) {
+    this->song = song;
+    this->coords = song->getCoordinates();
+}
 KDNode::KDNode(Point p) : point(std::move(p)), left(nullptr), right(nullptr) {}
 
 KDTree::KDTree(int dims) : dimensions(dims), root(nullptr) {}

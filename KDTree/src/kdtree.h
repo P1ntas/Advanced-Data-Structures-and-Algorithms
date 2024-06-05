@@ -4,9 +4,12 @@
 #include <iostream>
 #include <vector>
 #include <cmath>
+#include "song.h"
 
 struct Point {
+    Song * song = nullptr;
     std::vector<double> coords;
+    Point(Song * song);
     Point(std::vector<double> coordinates);
 };
 
