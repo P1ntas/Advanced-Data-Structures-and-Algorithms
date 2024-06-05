@@ -1,15 +1,14 @@
-#ifndef KDTREE_H
-#define KDTREE_H
+#ifndef KDTREE_KDTREE_H
+#define KDTREE_KDTREE_H
 
-#include "song.h"
+#include <iostream>
 #include <vector>
-#include <memory>
+#include <cmath>
 
-class Point {
-public:
-    Song song;
+struct Point {
     std::vector<double> coords;
-    Point(Song song_data);
+
+    explicit Point(std::vector<double> coordinates);
 };
 
 class KDNode {
@@ -17,22 +16,25 @@ public:
     Point point;
     KDNode* left;
     KDNode* right;
-    KDNode(Point p);
+
+    explicit KDNode(Point p);
 };
 
 class KDTree {
 private:
     int dimensions;
     KDNode* root;
+
     KDNode* insertUtil(KDNode* node, Point point, int depth) const;
     KDNode* findNearestNeighborUtil(KDNode* node, Point target, KDNode* best, double& bestDist, int depth);
-    double distance(const Point& p1, const Point& p2) const;
+    double distance(const Point &p1, const Point &p2) const;
 
 public:
-    KDTree(int dims);
+    explicit KDTree(int dims);
+
     void insert(Point point);
     Point findNearestNeighbor(Point target);
     std::vector<Point> findKNearestNeighbors(Point target, int k);
 };
 
-#endif
+#endif //KDTREE_KDTREE_H
