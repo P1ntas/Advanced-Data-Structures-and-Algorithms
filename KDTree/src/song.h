@@ -34,6 +34,7 @@ public:
     std::string artists;
     std::string release_date;
 
+    Song() {}
     Song(std::map<std::string, double> numeric_data,
         std::string id, std::string name,
         std::string artists,
@@ -100,6 +101,9 @@ public:
         return *this;
     }
     
+    std::map<std::string,double> getNumericData() {
+        return numeric_data;
+    }
 };
 
 #endif
