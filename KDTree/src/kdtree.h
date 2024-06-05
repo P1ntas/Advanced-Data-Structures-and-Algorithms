@@ -37,6 +37,7 @@ public:
     void insert(Point point);
     Point findNearestNeighbor(Point target);
     std::vector<Point> findKNearestNeighbors(Point target, int k);
+    int getDimensions() const;
 };
 
 #endif //KDTREE_KDTREE_H

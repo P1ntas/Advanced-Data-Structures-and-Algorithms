@@ -133,3 +133,8 @@ std::vector<Point> KDTree::findKNearestNeighbors(Point target, int k) {
 
     return nearestNeighbors;
 }
+
+int KDTree::getDimensions() const
+{
+    return dimensions;
+}
