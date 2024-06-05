@@ -1,7 +1,11 @@
 # How to run
-Call first 
+To run main.cpp:
+
 ```
-cmake CMakeLists.txt
-make
-./KDTree
+./run.sh
+```
+
+To clean unecessary files
+```
+./clean_directory.sh
 ```

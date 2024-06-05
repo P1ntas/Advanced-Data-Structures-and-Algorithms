@@ -6,7 +6,6 @@ files=(
     "./cmake_install.cmake"
     "./CMakeFiles"
     "./CMakeCache.txt"
-    "./KDTree"
 )
 
 # Loop through the list and delete each item
