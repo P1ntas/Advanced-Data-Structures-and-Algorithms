@@ -1,39 +1,63 @@
 #include "song.h"
 
-#include <stdexcept>
+Song::Song() {
+    this->numeric_data = {};
+    // add 0 as default value for all numeric data keys
+    for (std::string key : keys) {
+        this->numeric_data[key] = 0;
+    }
 
-Song::Song(std::map<std::string, double> numeric_data,
-    std::string id,
-    std::string name,
-    std::string artists,
-    std::string release_date){
-
-        // Load the string data into the object
-        this->id = id;
-        this->name = name;
-        this->artists = artists;
-        this->release_date = release_date;
-
-        // Load the numeric data into the object
-        for (auto key : keys){
-            if (numeric_data.find(key) == numeric_data.end()){
-                throw std::invalid_argument("Missing key: " + key);
-            }
-
-            // TODO: Convert the numeric data into double if necessary
-
-            this->numeric_data[key] = numeric_data[key];
-        }
+    this->id = "default ID";
+    this->name = "default name";
+    this->artists = {};
+    this->release_date = "default release date";
 
 }
-
-std::vector<double> Song::getCoordinates() const
+Song::Song(std::map<std::string, double> numeric_data,
+           std::string id,
+           std::string name,
+           std::vector<std::string> artists,
+           std::string release_date)
 {
-    // Implement a vector with the order defined in the keys vector
-    std::vector<double> coords;
-    for (auto key : keys){
-        coords.push_back(numeric_data.at(key));
+    this->numeric_data = numeric_data;
+    this->id = id;
+    this->name = name;
+    this->artists = artists;
+    this->release_date = release_date;
+}
+
+bool Song::operator<(const Song &song) const
+{
+    return this->name < song.name;
+}
+bool Song::operator==(const Song &song) const
+{
+    return this->name == song.name;
+}
+bool Song::operator!=(const Song &song) const
+{
+    return this->name != song.name;
+}
+bool Song::operator>(const Song &song) const
+{
+    return this->name > song.name;
+}
+Song &Song::operator=(const Song &song)
+{
+    this->numeric_data = song.numeric_data;
+    this->id = song.id;
+    this->name = song.name;
+    this->artists = song.artists;
+    this->release_date = song.release_date;
+    return *this;
+}
+
+std::vector<double> Song::get_coordinates() const
+{
+    std::vector<double> coordinates;
+    for (std::string key : keys)
+    {
+        coordinates.push_back(this->numeric_data.at(key));
     }
-    
-    return coords;
+    return coordinates;
 }
