@@ -41,10 +41,6 @@ public:
         std::string release_date);
     std::vector<double> getCoordinates() const;
 
-    const Song* getSong() const {
-        return this;
-    }
-
     // Overload the operator to compare two songs
     bool operator==(const Song &song) const {
         return this->id == song.id;
