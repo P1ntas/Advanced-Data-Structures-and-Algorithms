@@ -56,6 +56,10 @@ public:
     std::vector<double> get_coordinates() const;
     // Key getter
     const std::vector<std::string> get_keys() const;
+    // Name getter
+    std::string get_name() const;
+    // Numeric data getter
+    std::map<std::string, double> get_numeric_data() const;
 };
 
 #endif
