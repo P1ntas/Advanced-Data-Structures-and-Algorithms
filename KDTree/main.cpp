@@ -110,14 +110,12 @@ int main() {
     }
 
     // Find the nearest neighbor to a given song
-    Song target = get_song(songs, "Piano Concerto No. 3 in D Minor, Op. 30: III. Finale. Alla breve");
-    // Print target song
-    std::cout << "Target song: " << target.get_name() << std::endl;
-    std::vector<std::string> keys = target.get_keys();
-    std::vector<double> target_coords;
-    for (std::string key : keys) {
-        std::cout << key << ": " << target.get_numeric_data().at(key) << std::endl;
-    }
+    Song target = get_song(songs, "Goat");
+    std::cout << target.get_coordinates().size() << std::endl;
+    Point nearest = tree.findNearestNeighbor(Point(target));
 
+    std::cout << "Nearest neighbor to " << target.get_name() << " is " << nearest.song.get_name() << std::endl;
+    // Id of the nearest neighbor
+    std::cout << "Id: " << nearest.song.get_id() << std::endl;
     return 0;
 } 
