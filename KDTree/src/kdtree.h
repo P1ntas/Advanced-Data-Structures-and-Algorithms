@@ -13,18 +13,17 @@ struct Point {
         // Each key in the map is a dimension in the KDTree
         // Create a song object with the given coordinates
         std::map<std::string, double> numeric_data;
-        std::vector<std::string> keys = Song().keys;
+        const std::vector<std::string> keys = Song().get_keys();
         for (int i = 0; i < keys.size(); ++i)
         {
             numeric_data[keys[i]] = coords[i];
         }
-        this->song = Song(numeric_data, "DEFAULT", "DEFAULT", "DEFAULT", "DEFAULT");
     }
 
     Point(Song &song)
     {
         this->song = song;
-        this->coords = song.getCoordinates();
+        this->coords = song.get_coordinates();
     }
 };
 
