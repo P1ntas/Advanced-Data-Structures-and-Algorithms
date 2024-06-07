@@ -4,3 +4,4 @@ KDTree/CMakeFiles
 KDTree/CMakeCache.txt
 KDTree/KDTree
 .vscode/settings.json
+build/
