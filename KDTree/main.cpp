@@ -12,8 +12,28 @@
 
 using json = nlohmann::json;
 
+std::vector<std::string> parseArtists(const std::string& artistsString) {
+    std::vector<std::string> artists;
+    std::string artist;
+    bool inQuotes = false;
+    
+    for (char c : artistsString) {
+        if (c == '\'' && (artist.empty() || artist.back() != '\\')) {
+            inQuotes = !inQuotes;
+            if (!inQuotes && !artist.empty()) {
+                artists.push_back(artist);
+                artist.clear();
+            }
+        } else if (inQuotes) {
+            artist += c;
+        }
+    }
+
+    return artists;
+}
+
 std::vector<Song> readJSON(const std::string& filename) {
-    std::vector<std::string> keys = Song().keys;
+    const std::vector<std::string> keys = Song().get_keys();
 
     // Read the JSON file
     std::cout << "Reading JSON file: " << filename << std::endl;
@@ -55,84 +75,49 @@ std::vector<Song> readJSON(const std::string& filename) {
         //TODO: Standardize the data
         std::string id = item["id"];
         std::string name = item["name"];
-        std::string artists = item["artists"];
+        std::vector<std::string> artists = parseArtists(item["artists"]);
         std::string release_date = item["release_date"];
 
-        songs.push_back(Song(
-            numeric_data,
-            id,
-            name,
-            artists,
-            release_date
-        ));
-
+        songs.push_back(Song(numeric_data, id, name, artists, release_date));
     }
     std::cout << "JSON file read successfully" << std::endl;
     return songs;
 }
 
-Song * getSongByName(std::vector<Song> songs, std::string name) {
-    // Binary search
-    int left = 0;
-    int right = songs.size() - 1;
-
-    while (left <= right) {
-        int middle = left + (right - left) / 2;
-
-        if (songs[middle].name == name) {
-            std::cout << "Song found: " << name << std::endl;
-            std::cout << "Song: " << songs[middle].name << std::endl;
-            std::vector<std::string> keys = Song().keys;
-
-            for (auto key : keys) {
-                std::cout << key << ": " << songs[middle].numeric_data[key] << std::endl;
-            } 
-
-            return &songs[middle];
-        }
-
-        if (songs[middle].name < name) {
-            left = middle + 1;
-        } else {
-            right = middle - 1;
+Song get_song(std::vector<Song> songs, std::string name) {
+    for (Song song : songs) {
+        if (song.get_name() == name) {
+            return song;
         }
     }
-
-    std::cout << "Song not found: " << name << std::endl;
-    return nullptr;
+    throw std::invalid_argument("Song not found");
 }
 
 int main() {
+    std::vector<Song> songs = readJSON("dataset/data.json");
+    sort(songs.begin(), songs.end(), [](const Song& a, const Song& b) {
+        return a.get_name() < b.get_name();
+    });
 
-    // Read the songs from the JSON file
-    std::vector<Song> songs = readJSON("./dataset/data.json");
+    std::cout << "Number of songs: " << songs.size() << std::endl;
 
-    // Order the songs by name to use binary search later
-    std::sort(songs.begin(), songs.end());
+    // Create a KDTree with the number of dimensions
+    KDTree tree(songs[0].get_coordinates().size());
 
-    // Create a KD tree with the same number of dimensions as the songs
-    KDTree tree(songs[0].keys.size());
-
-    // Insert the songs into the KD tree
-    for (const auto& song : songs) {
-        tree.insert(
-            Point(
-                song.getSong()
-            )
-        );
+    // Insert all the songs into the KDTree
+    for (Song song : songs) {
+        tree.insert(Point(song));
     }
-    
-    /*
-    1st: retrieve the name of the song
-    2nd: retrieve the song from DB (vector of songs) using the name
-    3rd: retrieve the song from KDTree using the song
-    */
 
-    // Get the song by name
-    std::string song_name = "Goat";
-    Song * song = getSongByName(songs, song_name);
-
-    
+    // Find the nearest neighbor to a given song
+    Song target = get_song(songs, "Piano Concerto No. 3 in D Minor, Op. 30: III. Finale. Alla breve");
+    // Print target song
+    std::cout << "Target song: " << target.get_name() << std::endl;
+    std::vector<std::string> keys = target.get_keys();
+    std::vector<double> target_coords;
+    for (std::string key : keys) {
+        std::cout << key << ": " << target.get_numeric_data().at(key) << std::endl;
+    }
 
     return 0;
-}
+} 
