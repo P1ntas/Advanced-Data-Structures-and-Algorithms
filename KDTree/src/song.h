@@ -60,6 +60,8 @@ public:
     std::string get_name() const;
     // Numeric data getter
     std::map<std::string, double> get_numeric_data() const;
+    // ID getter
+    std::string get_id() const;
 };
 
 #endif

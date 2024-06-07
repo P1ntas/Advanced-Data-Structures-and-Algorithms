@@ -76,3 +76,8 @@ std::map<std::string, double> Song::get_numeric_data() const
 {
     return numeric_data;
 }
+
+std::string Song::get_id() const
+{
+    return id;
+}
