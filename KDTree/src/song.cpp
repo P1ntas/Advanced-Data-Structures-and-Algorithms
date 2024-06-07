@@ -61,3 +61,7 @@ std::vector<double> Song::get_coordinates() const
     }
     return coordinates;
 }
+const std::vector<std::string> Song::get_keys() const
+{
+    return keys;
+}
