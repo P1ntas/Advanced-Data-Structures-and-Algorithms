@@ -9,25 +9,24 @@
 struct Point {
     Song song;
     std::vector<double> coords;
-    Point(Song &song);
-    Point(std::vector<double> coordinates);
-};
-
-Point::Point(std::vector<double> coordinates) : coords(std::move(coordinates)) {
-    // Each key in the map is a dimension in the KDTree
-    // Create a song object with the given coordinates
-    std::map<std::string, double> numeric_data;
-    std::vector<std::string> keys = Song().keys;
-    for (int i = 0; i < keys.size(); ++i) {
-        numeric_data[keys[i]] = coords[i];
+    Point(std::vector<double> coordinates) : coords(std::move(coordinates)) {
+        // Each key in the map is a dimension in the KDTree
+        // Create a song object with the given coordinates
+        std::map<std::string, double> numeric_data;
+        std::vector<std::string> keys = Song().keys;
+        for (int i = 0; i < keys.size(); ++i)
+        {
+            numeric_data[keys[i]] = coords[i];
+        }
+        this->song = Song(numeric_data, "DEFAULT", "DEFAULT", "DEFAULT", "DEFAULT");
     }
-    this->song = Song(numeric_data, "DEFAULT", "DEFAULT", "DEFAULT", "DEFAULT");
-}
 
-Point::Point( Song &song) {
-    this->song = song;
-    this->coords = song.getCoordinates();
-}
+    Point(Song &song)
+    {
+        this->song = song;
+        this->coords = song.getCoordinates();
+    }
+};
 
 class KDNode {
 public:
