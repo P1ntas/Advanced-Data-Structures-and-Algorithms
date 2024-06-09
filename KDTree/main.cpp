@@ -119,5 +119,15 @@ int main() {
     std::cout << "Nearest neighbor to " << target.get_name() << " is " << nearest.song.get_name() << std::endl;
     // Id of the nearest neighbor
     std::cout << "Id: " << nearest.song.get_id() << std::endl;
+
+
+    // Find the k nearest neighbors to a given song
+    std::vector<Point> kNearest = tree.findKNearestNeighbors(Point(target), 5);
+    std::cout << "5 Nearest neighbors to " << target.get_name() << " are:" << std::endl;
+    for (Point p : kNearest) {
+        std::cout << p.song.get_name() << std::endl;
+    }
+    
+
     return 0;
 } 
