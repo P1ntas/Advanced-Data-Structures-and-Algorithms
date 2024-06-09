@@ -33,24 +33,30 @@ public:
     KDNode* left;
     KDNode* right;
 
-    KDNode(Point p);
+    explicit KDNode(Point p);
 };
 
 class KDTree {
 private:
-    int dimensions;
+    const int dimensions;
     KDNode* root;
 
     KDNode* insertUtil(KDNode* node, Point point, int depth) const;
+    
+    KDNode* buildTree(std::vector<Point> points, int currentDimension);
+
     KDNode* findNearestNeighborUtil(KDNode* node, Point target, KDNode* best, double& bestDist, int depth);
     double distance(const Point &p1, const Point &p2) const;
+    void clear(KDNode* node);
 
 public:
-    KDTree(int dims);
+    explicit KDTree(int dims);
+    KDTree(int dims, std::vector<Point> points);
+    ~KDTree();
 
     void insert(Point point);
     Point findNearestNeighbor(Point target);
-    std::vector<Point> findKNearestNeighbors(Point target, int k);
+    std::vector<Point> findKNearestNeighbors(Point target, int k) const;
     int getDimensions() const;
 };
 

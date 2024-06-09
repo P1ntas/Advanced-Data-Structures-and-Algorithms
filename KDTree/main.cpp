@@ -12,6 +12,9 @@
 
 using json = nlohmann::json;
 
+// Define Macros 
+#define DATA_FILE "./dataset/data.json"
+
 std::vector<std::string> parseArtists(const std::string& artistsString) {
     std::vector<std::string> artists;
     std::string artist;
@@ -94,23 +97,22 @@ Song get_song(std::vector<Song> songs, std::string name) {
 }
 
 int main() {
-    std::vector<Song> songs = readJSON("dataset/data.json");
+    std::vector<Song> songs = readJSON(DATA_FILE);
     sort(songs.begin(), songs.end(), [](const Song& a, const Song& b) {
         return a.get_name() < b.get_name();
     });
-
     std::cout << "Number of songs: " << songs.size() << std::endl;
 
-    // Create a KDTree with the number of dimensions
-    KDTree tree(songs[0].get_coordinates().size());
-
-    // Insert all the songs into the KDTree
+    std::vector<Point> points;
     for (Song song : songs) {
-        tree.insert(Point(song));
+        points.push_back(Point(song));
     }
 
+    // Create a KDTree with the number of dimensions
+    KDTree tree(points[0].coords.size(), points);
+
     // Find the nearest neighbor to a given song
-    Song target = get_song(songs, "Goat");
+    Song target = get_song(songs, "Clancy Lowered the Boom");
     std::cout << target.get_coordinates().size() << std::endl;
     Point nearest = tree.findNearestNeighbor(Point(target));
 

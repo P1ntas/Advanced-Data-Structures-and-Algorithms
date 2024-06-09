@@ -10,35 +10,56 @@ KDNode::KDNode(Point p) : point(std::move(p)), left(nullptr), right(nullptr) {}
 
 KDTree::KDTree(int dims) : dimensions(dims), root(nullptr) {}
 
+KDTree::KDTree(int dims, std::vector<Point> points) : dimensions(dims), root(nullptr) {
+    std::vector<Point> queue = points;
+    int dimension = 0;
+
+    root = buildTree(queue, dimension);
+}
+
+KDTree::~KDTree() {
+    clear(root);
+}
+
+void KDTree::clear(KDNode* node) {
+    if (node) {
+        clear(node->left);
+        clear(node->right);
+        delete node;
+    }
+}
+
 KDNode* KDTree::insertUtil(KDNode* node, Point point, int depth) const {
-    if (node == nullptr)
-        return new KDNode(point);
-
-    KDNode* current = node;
-    KDNode* parent = nullptr;
-    int dim = depth % dimensions;
-
-    // Traverse the tree to find the appropriate position for insertion
-    while (current != nullptr) {
-        parent = current;
-        if (point.coords[dim] < current->point.coords[dim])
-            current = current->left;
-        else
-            current = current->right;
-        depth++;
-        dim = depth % dimensions;
+    if (node == nullptr) {
+        return new KDNode(std::move(point));
     }
 
-    // Create the new node and attach it to the tree
-    KDNode* newNode = new KDNode(point);
-    if (point.coords[dim] < parent->point.coords[dim])
-        parent->left = newNode;
-    else
-        parent->right = newNode;
+    int dim = depth % dimensions;
+
+    if (point.coords[dim] < node->point.coords[dim]) {
+        node->left = insertUtil(node->left, std::move(point), depth + 1);
+    } else {
+        node->right = insertUtil(node->right, std::move(point), depth + 1);
+    }
 
     return node;
 }
 
+KDNode* KDTree::buildTree(std::vector<Point> points, int currentDimension) {
+    if (points.empty()) return nullptr;
+
+    int dim = currentDimension % dimensions;
+    std::sort(points.begin(), points.end(), [dim](const Point& a, const Point& b) {
+        return a.coords[dim] < b.coords[dim];
+    });
+
+    int medianIndex = points.size() / 2;
+    KDNode* node = new KDNode(points[medianIndex]);
+    node->left = buildTree(std::vector<Point>(points.begin(), points.begin() + medianIndex), currentDimension + 1);
+    node->right = buildTree(std::vector<Point>(points.begin() + medianIndex + 1, points.end()), currentDimension + 1);
+
+    return node;
+}
 
 KDNode* KDTree::findNearestNeighborUtil(KDNode* node, Point target, KDNode* best, double& bestDist, int depth) {
     if (node == nullptr)
@@ -80,7 +101,7 @@ Point KDTree::findNearestNeighbor(Point target) {
     return nearest->point;
 }
 
-std::vector<Point> KDTree::findKNearestNeighbors(Point target, int k) {
+std::vector<Point> KDTree::findKNearestNeighbors(Point target, int k) const {
     std::priority_queue<std::pair<double, KDNode*>> pq;
 
     // Helper function to compare distances for priority queue
