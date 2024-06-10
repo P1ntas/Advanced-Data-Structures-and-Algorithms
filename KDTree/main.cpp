@@ -15,6 +15,12 @@ using json = nlohmann::json;
 // Define Macros 
 #define DATA_FILE "./dataset/data.json"
 
+/**
+ * Parses a string containing artists and returns a vector of artists.
+ * 
+ * @param artistsString The string containing artists.
+ * @return A vector of artists parsed from the input string.
+ */
 std::vector<std::string> parseArtists(const std::string& artistsString) {
     std::vector<std::string> artists;
     std::string artist;
@@ -35,6 +41,14 @@ std::vector<std::string> parseArtists(const std::string& artistsString) {
     return artists;
 }
 
+/**
+ * Reads a JSON file containing song data and returns a vector of Song objects.
+ * 
+ * @param filename The path to the JSON file.
+ * @return A vector of Song objects read from the JSON file.
+ * @throws std::runtime_error if the file cannot be opened.
+ * @throws std::invalid_argument if any required key is missing in the JSON data.
+ */
 std::vector<Song> readJSON(const std::string& filename) {
     const std::vector<std::string> keys = Song().get_keys();
 
@@ -87,6 +101,14 @@ std::vector<Song> readJSON(const std::string& filename) {
     return songs;
 }
 
+/**
+ * Retrieves a song from a vector of songs based on its name.
+ * 
+ * @param songs The vector of songs to search in.
+ * @param name The name of the song to retrieve.
+ * @return The song with the specified name.
+ * @throws std::invalid_argument if the song is not found in the vector.
+ */
 Song get_song(std::vector<Song> songs, std::string name) {
     for (Song song : songs) {
         if (song.get_name() == name) {
@@ -96,6 +118,21 @@ Song get_song(std::vector<Song> songs, std::string name) {
     throw std::invalid_argument("Song not found");
 }
 
+/**
+ * @brief The main function of the program.
+ *
+ * This function is the entry point of the program. It performs the following tasks:
+ * 1. Reads a JSON file containing a list of songs.
+ * 2. Sorts the songs alphabetically by name.
+ * 3. Converts each song into a point in a multidimensional space.
+ * 4. Finds the nearest neighbors to a given song using three different approaches:
+ *    - Brute force search
+ *    - Logarithmic search
+ *    - KDTree search
+ * 5. Measures the performance of each approach and outputs the results.
+ *
+ * @return 0 indicating successful program execution.
+ */
 int main() {
 
     auto overall_start = std::chrono::high_resolution_clock::now(); // Start here performance measurement
