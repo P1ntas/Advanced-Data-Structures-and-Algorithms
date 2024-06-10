@@ -7,7 +7,7 @@ commands=(
     "cmake CMakeLists.txt"
     "make"
     "./clean_directory.sh"
-    #"clear"
+    "clear"
     "./KDTree"
 
 )

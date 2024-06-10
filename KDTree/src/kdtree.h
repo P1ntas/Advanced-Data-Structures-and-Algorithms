@@ -43,6 +43,16 @@ struct Point {
         this->song = song;
         this->coords = song.get_coordinates();
     }
+
+    /**
+     * @brief Overloaded equality operator.
+     * 
+     * @param other The other Point object to compare with.
+     * @return True if the two points are equal, false otherwise.
+     */
+    bool operator==(const Point &other) const {
+        return song == other.song && coords == other.coords;
+    }
 };
 
 /**

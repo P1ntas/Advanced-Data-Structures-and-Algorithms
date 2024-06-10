@@ -97,37 +97,114 @@ Song get_song(std::vector<Song> songs, std::string name) {
 }
 
 int main() {
+
+    auto overall_start = std::chrono::high_resolution_clock::now(); // Start here performance measurement
+
+    // Test setup
     std::vector<Song> songs = readJSON(DATA_FILE);
     sort(songs.begin(), songs.end(), [](const Song& a, const Song& b) {
         return a.get_name() < b.get_name();
     });
-    std::cout << "Number of songs: " << songs.size() << std::endl;
+    std::cout << "Number of songs: " << songs.size() << std::endl << std::endl;
 
     std::vector<Point> points;
     for (Song song : songs) {
         points.push_back(Point(song));
     }
 
-    // Create a KDTree with the number of dimensions
-    KDTree tree(points[0].coords.size(), points);
-
     // Find the nearest neighbor to a given song
     Song target = get_song(songs, "Clancy Lowered the Boom");
-    std::cout << target.get_coordinates().size() << std::endl;
-    Point nearest = tree.findNearestNeighbor(Point(target));
-
-    std::cout << "Nearest neighbor to " << target.get_name() << " is " << nearest.song.get_name() << std::endl;
-    // Id of the nearest neighbor
-    std::cout << "Id: " << nearest.song.get_id() << std::endl;
+    Point targetPoint(target);
 
 
     // Find the k nearest neighbors to a given song
-    std::vector<Point> kNearest = tree.findKNearestNeighbors(Point(target), 5);
-    std::cout << "5 Nearest neighbors to " << target.get_name() << " are:" << std::endl;
-    for (Point p : kNearest) {
-        std::cout << p.song.get_name() << std::endl;
+    int k = 5; 
+    k = k + 1;  // +1 to exclude the target itself
+
+    std::function <double(Point, Point)> distance = [](Point a, Point b) {
+        double dist = 0;
+        for (int i = 0; i < a.coords.size(); i++) {
+            dist += pow(a.coords[i] - b.coords[i], 2);
+        }
+        return sqrt(dist);
+    };
+
+    // First approach: Brute force search for each nearest neighbor
+    std::vector<Point> nearestNeighbors;
+
+    auto start_1 = std::chrono::high_resolution_clock::now(); // Start here performance measurement
+    for (int i = 0; i < k; i++) {
+        double minDist = std::numeric_limits<double>::max();
+        Point * nearestNeighbor;
+        for (int j = 0; j < points.size(); j++) {
+            // If already in the nearest neighbors list, skip
+            if (std::find(nearestNeighbors.begin(), nearestNeighbors.end(), points[j]) != nearestNeighbors.end()) {
+                continue;
+            }
+
+            double dist = distance(points[j], targetPoint);
+            if (dist < minDist) {
+                minDist = dist;
+                nearestNeighbor = &points[j];
+            }
+        }
+        nearestNeighbors.push_back(*nearestNeighbor);
     }
+    auto end_1 = std::chrono::high_resolution_clock::now(); // End here performance measurement
+    auto elapsed_1 = end_1 - start_1;
+
+
+    sort(nearestNeighbors.begin(), nearestNeighbors.end(), [targetPoint, distance](const Point& a, const Point& b) {
+        return distance(a, targetPoint) < distance(b, targetPoint);
+    });
+    // Output first approach
+    std::cout << "5 Nearest neighbors to " << target.get_name() << " are:" << std::endl;
+    for (int i = 1; i < k; i++) {
+        std::cout << nearestNeighbors[i].song.get_name() << "with id: " << nearestNeighbors[i].song.get_id() << std::endl;
+    }
+    std::cout << std::endl;
+
+
+    // Second approach: Logarithmic search for each nearest neighbor
     
+    auto start_2 = std::chrono::high_resolution_clock::now(); // Start here performance measurement
+    // Vector sorting is O(nlogn) and the loop is O(k)
+    sort(points.begin(), points.end(), [targetPoint, distance](const Point& a, const Point& b) {
+        return distance(a, targetPoint) < distance(b, targetPoint);
+    });
+    auto end_2 = std::chrono::high_resolution_clock::now(); // End here performance measurement
+    auto elapsed_2 = end_2 - start_2;
+
+
+    // Output second approach
+    std::cout << "5 Nearest neighbors to " << target.get_name() << " are:" << std::endl;
+    for (int i = 1; i < k; i++) {
+        std::cout << points[i].song.get_name() << "with id: " << points[i].song.get_id() << std::endl;
+    }
+    std::cout << std::endl;
+
+
+    // Third approach: KDTree search for each nearest neighbor
+    KDTree tree(points[0].coords.size(), points);
+    auto start_3 = std::chrono::high_resolution_clock::now(); // Start here performance measurement
+    std::vector<Point> kNearest = tree.findKNearestNeighbors(targetPoint, k);
+    auto end_3 = std::chrono::high_resolution_clock::now(); // End here performance measurement
+    auto elapsed_3 = end_3 - start_3;
+    // Output third approach
+    std::cout << "5 Nearest neighbors to " << target.get_name() << " are:" << std::endl;
+    for (int i = 1; i < k; i++) {
+        std::cout << kNearest[i].song.get_name() << "with id: " << kNearest[i].song.get_id() << std::endl;
+    }
+    std::cout << std::endl;
+
+    std::cout << "Brute force approach time: " << elapsed_1.count() << " seconds" << std::endl;
+    std::cout << "Logarithmic approach time: " << elapsed_2.count() << " seconds" << std::endl;
+    std::cout << "KDTree approach time: " << elapsed_3.count() << " seconds" << std::endl;
+
+    
+    auto overall_end = std::chrono::high_resolution_clock::now(); // End here performance measurement
+    auto overall_elapsed = overall_end - overall_start;
+    std::cout << "Overall time: " << overall_elapsed.count() << " seconds" << std::endl;
 
     return 0;
 } 
